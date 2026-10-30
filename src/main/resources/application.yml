@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: pix-payment-gateway
+  threads:
+    virtual:
+      enabled: true
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/pix}
+    username: ${DB_USER:pix}
+    password: ${DB_PASSWORD:pix}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP:localhost:9092}
+    producer:
+      acks: all
+      properties:
+        enable.idempotence: true
+  mvc:
+    problemdetails:
+      enabled: true
+
+pix:
+  merchant-name: Loja Exemplo
+  merchant-city: Sao Paulo
+  location-base-url: ${PIX_LOCATION_BASE_URL:pix.example.com/qr/v2}
+  webhook-secret: ${PIX_WEBHOOK_SECRET:dev-only-secret-change-me}
+  default-expiration: PT1H
+  sandbox:
+    enabled: ${PIX_SANDBOX_ENABLED:true}
+  outbox:
+    topic: pix.charge.events
+    batch-size: 50
+    max-attempts: 8
+    base-backoff: PT2S
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
